@@ -1,3 +1,7 @@
+/* ==============================
+   DATA
+============================== */
+
 const categories = [
     { icon:'🍳', name:'Kitchen', items:["Plates & bowls","Mugs & glasses","Cutlery set","Chef's knife","Cutting board","Frying pan","Saucepan","Baking sheet","Mixing bowls","Spatula & spoons","Tongs & whisk","Can opener","Coffee maker","Toaster","Blender","Microwave","Kettle","Dish soap & sponges","Trash can","Food containers","Aluminum foil","Paper towels"] },
     { icon:'🛏️', name:'Bedroom', items:["Mattress & bed frame","Pillows & sheets","Duvet/blanket","Bedside table","Lamp","Hangers","Laundry basket","Full length mirror","Curtains","Alarm clock"] },
@@ -6,48 +10,62 @@ const categories = [
 ];
 
 const catPhotos = {
-    'Kitchen': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200',
-    'Bedroom': 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200',
-    'Bathroom': 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1200',
-    'Living Room': 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1200'
+    Kitchen: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200',
+    Bedroom: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200',
+    Bathroom: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1200',
+    "Living Room": 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1200'
 };
 
-/* ============================
+/* ==============================
    STATE
-============================ */
+============================== */
 
 let checked = new Set(JSON.parse(localStorage.getItem('mv') || '[]'));
 let activeBg = 'a';
 
-/* ============================
+/* ==============================
    INIT
-============================ */
+============================== */
 
 document.addEventListener('DOMContentLoaded', init);
 
- function init() {
-     renderCategories();
-     updateStats();
-     setBackground('Kitchen');
-     attachGlobalEvents() {
-        document.querySelector('.fab').addEventListener('click', toggleMenu);
-        document.getElementById('overlay').addEventListener('click', closeAll);
-        document.querySelector('.menu-btn').addEventListener('click', confirmReset);
-        document.getElementById('resetBtn').addEventListener('click', doReset);
-        document.getElementById('cancelReset').addEventListener('click', closeAll);
-         
-    };
+function init() {
+    renderCategories();
+    updateStats();
+    setBackground('Kitchen');
     attachGlobalEvents();
- }
-/* ============================
+}
+
+/* ==============================
+   GLOBAL EVENTS
+============================== */
+
+function attachGlobalEvents() {
+    const fab = document.querySelector('.fab');
+    const overlay = document.getElementById('overlay');
+    const menuBtn = document.querySelector('.menu-btn');
+    const resetBtn = document.getElementById('resetBtn');
+    const cancelBtn = document.getElementById('cancelReset');
+
+    if (fab) fab.addEventListener('click', toggleMenu);
+    if (overlay) overlay.addEventListener('click', closeAll);
+    if (menuBtn) menuBtn.addEventListener('click', confirmReset);
+    if (resetBtn) resetBtn.addEventListener('click', doReset);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeAll);
+}
+
+/* ==============================
    RENDER
-============================ */
+============================== */
 
 function renderCategories() {
     const container = document.getElementById('content');
+    if (!container) return;
+
     container.innerHTML = '';
 
     categories.forEach(cat => {
+
         const wrapper = document.createElement('div');
         wrapper.className = 'category collapsed';
 
@@ -74,7 +92,9 @@ function renderCategories() {
         itemList.className = 'items-list';
 
         cat.items.forEach(item => {
+
             const id = `${cat.name}|${item}`;
+
             const itemDiv = document.createElement('div');
             itemDiv.className = 'item';
             itemDiv.dataset.id = id;
@@ -91,11 +111,13 @@ function renderCategories() {
                 </div>
             `;
 
+            // Item toggle
             itemDiv.addEventListener('click', (e) => {
                 if (e.target.closest('.shop-logo')) return;
-                toggleItem(itemDiv, id, cat);
+                toggleItem(itemDiv, id, cat.name);
             });
 
+            // Shop links
             itemDiv.querySelectorAll('.shop-logo').forEach((logo, index) => {
                 logo.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -114,11 +136,12 @@ function renderCategories() {
     });
 }
 
-/* ============================
+/* ==============================
    LOGIC
-============================ */
+============================== */
 
-function toggleItem(el, id, cat) {
+function toggleItem(el, id, categoryName) {
+
     if (checked.has(id)) {
         checked.delete(id);
         el.classList.remove('checked');
@@ -128,38 +151,53 @@ function toggleItem(el, id, cat) {
     }
 
     localStorage.setItem('mv', JSON.stringify([...checked]));
+
     updateStats();
-    updateCategoryCount(cat.name);
+    updateCategoryCount(categoryName);
 }
 
 function updateCategoryCount(name) {
+
     const cat = categories.find(c => c.name === name);
+    if (!cat) return;
+
     const count = cat.items.filter(i => checked.has(name + '|' + i)).length;
     const el = document.getElementById(`cnt-${name}`);
+
+    if (!el) return;
+
     el.innerText = `${count}/${cat.items.length}`;
     el.classList.toggle('done', count === cat.items.length);
 }
 
 function updateStats() {
+
     const total = categories.reduce((sum, c) => sum + c.items.length, 0);
     const done = checked.size;
-    const pct = Math.round((done / total) * 100) || 0;
+    const pct = total ? Math.round((done / total) * 100) : 0;
 
-    document.getElementById('statsText').innerText = `${done}/${total} items packed`;
-    document.getElementById('statsPercent').innerText = `${pct}%`;
-    document.getElementById('progressBar').style.width = `${pct}%`;
+    const statsText = document.getElementById('statsText');
+    const statsPercent = document.getElementById('statsPercent');
+    const progressBar = document.getElementById('progressBar');
+
+    if (statsText) statsText.innerText = `${done}/${total} items packed`;
+    if (statsPercent) statsPercent.innerText = `${pct}%`;
+    if (progressBar) progressBar.style.width = `${pct}%`;
 }
 
-/* ============================
+/* ==============================
    BACKGROUND CROSSFADE
-============================ */
+============================== */
 
 function setBackground(name) {
+
     const url = catPhotos[name];
     if (!url) return;
 
     const bgA = document.getElementById('bg-a');
     const bgB = document.getElementById('bg-b');
+
+    if (!bgA || !bgB) return;
 
     const next = activeBg === 'a' ? bgB : bgA;
     const current = activeBg === 'a' ? bgA : bgB;
@@ -171,46 +209,40 @@ function setBackground(name) {
     activeBg = activeBg === 'a' ? 'b' : 'a';
 }
 
-/* ============================
+/* ==============================
    SHOP LINKS
-============================ */
+============================== */
 
 function openShop(item, index) {
+
     const q = encodeURIComponent(item);
-    let url;
+    let url = '';
 
     if (index === 0) url = `https://www.flipkart.com/search?q=${q}`;
     if (index === 1) url = `https://www.amazon.in/s?k=${q}`;
     if (index === 2) url = `https://www.meesho.com/search?q=${q}`;
 
-    window.open(url, '_blank');
+    if (url) window.open(url, '_blank');
 }
 
-/* ============================
+/* ==============================
    MENU / RESET
-============================ */
-
-function attachGlobalEvents() {
-    document.querySelector('.fab').addEventListener('click', toggleMenu);
-    document.getElementById('overlay').addEventListener('click', closeAll);
-    document.querySelector('.menu-btn').addEventListener('click', confirmReset);
-    document.getElementById('resetBtn').addEventListener('click', doReset);
-}
+============================== */
 
 function toggleMenu() {
-    document.getElementById('menu').classList.toggle('show');
-    document.getElementById('overlay').classList.toggle('show');
+    document.getElementById('menu')?.classList.toggle('show');
+    document.getElementById('overlay')?.classList.toggle('show');
 }
 
 function closeAll() {
-    document.getElementById('menu').classList.remove('show');
-    document.getElementById('overlay').classList.remove('show');
-    document.getElementById('resetModal').classList.remove('show');
+    document.getElementById('menu')?.classList.remove('show');
+    document.getElementById('overlay')?.classList.remove('show');
+    document.getElementById('resetModal')?.classList.remove('show');
 }
 
 function confirmReset() {
-    document.getElementById('resetModal').classList.add('show');
-    document.getElementById('overlay').classList.add('show');
+    document.getElementById('resetModal')?.classList.add('show');
+    document.getElementById('overlay')?.classList.add('show');
 }
 
 function doReset() {
@@ -220,6 +252,3 @@ function doReset() {
     renderCategories();
     updateStats();
 }
-
-
-

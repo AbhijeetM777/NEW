@@ -31,22 +31,23 @@
 
     <div class="content" id="content"></div>
 
-    <button class="fab" onclick="toggleMenu()">≡</button>
-    <div class="overlay" id="overlay" onclick="closeAll()"></div>
+    <button class="fab">≡</button>>
+    <div class="overlay" id="overlay"></div>
 
     <div class="menu" id="menu">
-        <button class="menu-btn" onclick="confirmReset()">🗑️ Reset Progress</button>
+        <button class="menu-btn">🗑️ Reset Progress</button>
     </div>
 
     <div class="reset-confirm" id="resetModal">
         <h3>🗑️ Reset Progress?</h3>
         <p>This will clear all checkboxes.</p>
-        <button onclick="doReset()">Reset</button>
+        <button id="resetBtn">Reset</button>
         <button onclick="closeAll()">Cancel</button>
     </div>
 
     <script src="JavaScript.js"></script>
 </body>
 </html>
+
 
 

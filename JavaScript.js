@@ -25,17 +25,17 @@ let activeBg = 'a';
 
 document.addEventListener('DOMContentLoaded', init);
 
-function init() {
-    renderCategories();
-    updateStats();
-    setBackground('Kitchen');
-    attachGlobalEvents() {
+ function init() {
+     renderCategories();
+     updateStats();
+     setBackground('Kitchen');
+     attachGlobalEvents() {
         document.getElementById('overlay').addEventListener('click', closeAll);
         document.querySelector('.menu-btn').addEventListener('click', confirmReset);
         document.getElementById('resetBtn').addEventListener('click', doReset);
     };
-}
-
+    attachGlobalEvents();
+ }
 /* ============================
    RENDER
 ============================ */
@@ -189,6 +189,9 @@ function openShop(item, index) {
 
 function attachGlobalEvents() {
     document.querySelector('.fab').addEventListener('click', toggleMenu);
+    document.getElementById('overlay').addEventListener('click', closeAll);
+    document.querySelector('.menu-btn').addEventListener('click', confirmReset);
+    document.getElementById('resetBtn').addEventListener('click', doReset);
 }
 
 function toggleMenu() {
@@ -214,4 +217,5 @@ function doReset() {
     renderCategories();
     updateStats();
 }
+
 

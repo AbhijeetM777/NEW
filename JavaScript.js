@@ -12,15 +12,15 @@ const categories = [
 ];
 
 const catPhotos = {
-    'Kitchen': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1400',
-    'Bedroom': 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1400',
-    'Bathroom': 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1400',
-    'Living Room': 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1400',
-    'Cleaning': 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1400',
-    'Tools': 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=1400',
-    'Safety': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400',
-    'Gwen\'s Corner': 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=1400',
-    'House Aesthetics': 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1400'
+    'Kitchen': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200',
+    'Bedroom': 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200',
+    'Bathroom': 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1200',
+    'Living Room': 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1200',
+    'Cleaning': 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200',
+    'Tools': 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=1200',
+    'Safety': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200',
+    'Gwen\'s Corner': 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=1200',
+    'House Aesthetics': 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1200'
 };
 
 /* --- STATE --- */
@@ -34,12 +34,12 @@ function init() {
 
     categories.forEach(cat => {
         const key = cat.name;
-        const itemsInCategory = cat.items;
-        const checkedCount = itemsInCategory.filter(i => checked.has(key + '|' + i)).length;
-        const isDone = checkedCount === itemsInCategory.length;
+        const items = cat.items;
+        const checkedCount = items.filter(i => checked.has(key + '|' + i)).length;
+        const isDone = checkedCount === items.length;
 
         const wrapper = document.createElement('div');
-        wrapper.className = `category collapsed`; 
+        wrapper.className = 'category collapsed';
         wrapper.innerHTML = `
             <div class="category-header" onclick="handleToggle(this, '${cat.name}')">
                 <div class="category-title">
@@ -48,13 +48,13 @@ function init() {
                 </div>
                 <div class="right-side">
                     <span class="category-count ${isDone ? 'done' : ''}" id="cnt-${key}">
-                        ${checkedCount}/${itemsInCategory.length}
+                        ${checkedCount}/${items.length}
                     </span>
                     <span class="toggle-icon">▼</span>
                 </div>
             </div>
             <div class="items-list">
-                ${itemsInCategory.map(item => {
+                ${items.map(item => {
                     const id = key + '|' + item;
                     const isChecked = checked.has(id);
                     return \`
@@ -68,7 +68,7 @@ function init() {
                         </div>
                     </div>\`;
                 }).join('')}
-            </div>\`;
+            </div>`;
         c.appendChild(wrapper);
     });
     updateStats();
@@ -83,7 +83,9 @@ function handleToggle(header, name) {
 function setBackground(name) {
     const url = catPhotos[name];
     const bgA = document.getElementById('bg-a');
-    if(bgA && url) bgA.style.backgroundImage = \`url("\${url}")\`;
+    if (bgA && url) {
+        bgA.style.backgroundImage = \`url("\${url}")\`;
+    }
 }
 
 function handleItemClick(e, el) {
@@ -111,27 +113,50 @@ function handleItemClick(e, el) {
 function updateStats() {
     const total = categories.reduce((acc, cat) => acc + cat.items.length, 0);
     const done = checked.size;
-    const percent = Math.round((done / total) * 100) || 0;
+    const pct = Math.round((done / total) * 100) || 0;
     
     document.getElementById('statsText').innerText = \`\${done}/\${total} items packed\`;
-    document.getElementById('statsPercent').innerText = \`\${percent}%\`;
-    document.getElementById('progressBar').style.width = \`\${percent}%\`;
+    document.getElementById('statsPercent').innerText = \`\${pct}%\`;
+    document.getElementById('progressBar').style.width = \`\${pct}%\`;
 }
 
 function openShop(item, store, e) {
     e.stopPropagation();
     const q = encodeURIComponent(item);
-    let url = store === 'fk' ? \`https://www.flipkart.com/search?q=\${q}\` : 
-              store === 'amz' ? \`https://www.amazon.in/s?k=\${q}\` : 
-              \`https://www.meesho.com/search?q=\${q}\`;
+    let url = '';
+    if (store === 'fk') url = \`https://www.flipkart.com/search?q=\${q}\`;
+    if (store === 'amz') url = \`https://www.amazon.in/s?k=\${q}\`;
+    if (store === 'meesho') url = \`https://www.meesho.com/search?q=\${q}\`;
     window.open(url, '_blank');
 }
 
-function toggleMenu(){ document.getElementById('menu').classList.toggle('show'); document.getElementById('overlay').classList.toggle('show'); }
-function closeAll(){ document.getElementById('menu').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); document.getElementById('resetModal').classList.remove('show'); }
-function confirmReset(){ closeAll(); document.getElementById('resetModal').classList.add('show'); document.getElementById('overlay').classList.add('show'); }
-function doReset(){ checked.clear(); localStorage.removeItem('mv'); init(); closeAll(); }
+function toggleMenu(){ 
+    document.getElementById('menu').classList.toggle('show'); 
+    document.getElementById('overlay').classList.toggle('show'); 
+}
 
-/* --- START --- */
-document.addEventListener('DOMContentLoaded', init);
+function closeAll(){ 
+    document.getElementById('menu').classList.remove('show'); 
+    document.getElementById('overlay').classList.remove('show'); 
+    document.getElementById('resetModal').classList.remove('show'); 
+}
 
+function confirmReset(){ 
+    closeAll(); 
+    document.getElementById('resetModal').classList.add('show'); 
+    document.getElementById('overlay').classList.add('show'); 
+}
+
+function doReset(){ 
+    checked.clear(); 
+    localStorage.removeItem('mv'); 
+    init(); 
+    closeAll(); 
+}
+
+/* --- EXECUTE --- */
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}

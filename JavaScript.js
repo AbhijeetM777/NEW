@@ -29,7 +29,11 @@ function init() {
     renderCategories();
     updateStats();
     setBackground('Kitchen');
-    attachGlobalEvents();
+    attachGlobalEvents() {
+        document.getElementById('overlay').addEventListener('click', closeAll);
+        document.querySelector('.menu-btn').addEventListener('click', confirmReset);
+        document.getElementById('resetBtn').addEventListener('click', doReset);
+    };
 }
 
 /* ============================
@@ -210,3 +214,4 @@ function doReset() {
     renderCategories();
     updateStats();
 }
+

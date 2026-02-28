@@ -59,7 +59,7 @@ function renderCategories(){
 
     categories.forEach(cat=>{
         const wrapper = document.createElement('div');
-        wrapper.className='category collapsed';
+        wrapper.className = index === 0 ? 'category' : 'category collapsed';
 
         wrapper.innerHTML = `
             <div class="category-header">
@@ -178,3 +178,4 @@ function doReset(){
     renderCategories();
     updateStats();
 }
+

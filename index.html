@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manaya's Moving Essentials</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="data:,">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manaya's Moving Essentials</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:,">
+
 </head>
 <body>
 
@@ -14,33 +16,33 @@
 <div id="bg-b"></div>
 
 <div class="app-header">
-    <div class="header-top">
-        <h1><div class="logo-badge">🏡</div>Manaya's New House</h1>
-    </div>
+    <h1><span class="logo-badge">🏡</span> Manaya's New House</h1>
+
     <div class="header-stats">
         <span id="statsText">0/0 items packed</span>
-        <span class="pct" id="statsPercent">0%</span>
+        <span id="statsPercent">0%</span>
     </div>
+
     <div class="progress-container">
         <div class="progress-bar" id="progressBar"></div>
     </div>
 </div>
 
 <div class="hint-bar">
-    Tap logos to shop on <b>Flipkart</b>, <b>Amazon</b> or <b>Meesho</b> 🛒
+    Tap logos to shop on <b>Flipkart</b>, <b>Amazon</b> or <b>Meesho</b>
 </div>
 
-<div class="content" id="content"></div>
+<div id="content" class="content"></div>
 
 <button class="fab">≡</button>
-<div class="overlay" id="overlay"></div>
+<div id="overlay" class="overlay"></div>
 
-<div class="menu" id="menu">
+<div id="menu" class="menu">
     <button class="menu-btn">🗑️ Reset Progress</button>
 </div>
 
-<div class="reset-confirm" id="resetModal">
-    <h3>🗑️ Reset Progress?</h3>
+<div id="resetModal" class="reset-modal">
+    <h3>Reset Progress?</h3>
     <p>This will clear all checkboxes.</p>
     <button id="resetBtn">Reset</button>
     <button id="cancelReset">Cancel</button>

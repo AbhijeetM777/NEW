@@ -25,15 +25,18 @@ const catPhotos = {
 let checked = new Set(JSON.parse(localStorage.getItem('mv') || '[]'));
 const itemURLs = new Map();
 
-function init(){
+function init() {
     buildURLs();
     const c = document.getElementById('content');
+    if (!c) return; // Safety check
+    
     c.innerHTML = '';
 
     categories.forEach(cat => {
         const key = cat.name;
-        const done = cat.items.filter(i => checked.has(key+'|'+i)).length;
-        const isDone = done === cat.items.length;
+        const itemsInCategory = cat.items;
+        const checkedItems = itemsInCategory.filter(i => checked.has(key + '|' + i)).length;
+        const isDone = checkedItems === itemsInCategory.length;
 
         const wrapper = document.createElement('div');
         wrapper.className = 'category';
@@ -41,89 +44,40 @@ function init(){
 
         wrapper.innerHTML = `
             <div class="category-header" onclick="this.parentElement.classList.toggle('collapsed')">
-                <div class="category-title"><div class="cat-icon">${cat.icon}</div>${cat.name}</div>
+                <div class="category-title">
+                    <div class="cat-icon">${cat.icon}</div>
+                    <span class="cat-name">${cat.name}</span>
+                </div>
                 <div class="right-side">
-                    <span class="category-count ${isDone?'done':''}" id="cnt-${key}">${done}/${cat.items.length}</span>
+                    <span class="category-count ${isDone ? 'done' : ''}" id="cnt-${key}">
+                        ${checkedItems}/${itemsInCategory.length}
+                    </span>
                     <span class="toggle-icon">▼</span>
                 </div>
             </div>
             <div class="items-list">
-                ${cat.items.map(item => {
+                ${itemsInCategory.map(item => {
                     const id = key + '|' + item;
                     const isChecked = checked.has(id);
                     return `
-                    <div class="item ${isChecked?'checked':''}" data-id="${id}" onclick="handleItemClick(event, this)">
+                    <div class="item ${isChecked ? 'checked' : ''}" data-id="${id}" onclick="handleItemClick(event, this)">
                         <div class="checkbox"></div>
                         <div class="item-text">${item}</div>
                         <div class="shop-logos">
                             <div class="shop-logo logo-flipkart" onclick="openShop('${item}', 'fk', event)">🛒</div>
                             <div class="shop-logo logo-amazon" onclick="openShop('${item}', 'amz', event)">📦</div>
+                            <div class="shop-logo logo-meesho" onclick="openShop('${item}', 'meesho', event)">🛍️</div>
                         </div>
                     </div>`;
                 }).join('')}
             </div>`;
         c.appendChild(wrapper);
     });
+
     updateStats();
     setupObserver();
 }
 
-function handleItemClick(e, el){
-    if(e.target.closest('.shop-logo')) return;
-    const id = el.dataset.id;
-    if(checked.has(id)) checked.delete(id);
-    else checked.add(id);
-    localStorage.setItem('mv', JSON.stringify([...checked]));
-    init();
-}
-
-function buildURLs(){
-    categories.forEach(cat => cat.items.forEach(item => {
-        const q = encodeURIComponent(item);
-        itemURLs.set(item, {
-            fk: 'https://www.flipkart.com/search?q=' + q,
-            amz: 'https://www.amazon.in/s?k=' + q
-        });
-    }));
-}
-
-function openShop(item, site, e){
-    e.stopPropagation();
-    const urls = itemURLs.get(item);
-    window.open(site === 'fk' ? urls.fk : urls.amz, '_blank');
-}
-
-function updateStats(){
-    let total=0, done=0;
-    categories.forEach(cat => {
-        total += cat.items.length;
-        done += cat.items.filter(i => checked.has(cat.name+'|'+i)).length;
-    });
-    const pct = Math.round((done/total)*100);
-    document.getElementById('statsText').textContent = `${done}/${total} items packed`;
-    document.getElementById('statsPercent').textContent = `${pct}%`;
-    document.getElementById('progressBar').style.width = `${pct}%`;
-}
-
-function setupObserver(){
-    const obs = new IntersectionObserver((entries)=>{
-        entries.forEach(e => {
-            if(e.isIntersecting) setBackground(e.target.dataset.catName);
-        });
-    }, { threshold: 0.5 });
-    document.querySelectorAll('.category').forEach(el => obs.observe(el));
-}
-
-function setBackground(name){
-    const url = catPhotos[name];
-    const bgA = document.getElementById('bg-a');
-    bgA.style.backgroundImage = `url("${url}")`;
-}
-
-// Simple Menu Functions
-function toggleMenu(){ document.getElementById('menu').classList.toggle('show'); document.getElementById('overlay').classList.toggle('show'); }
-function closeAll(){ document.getElementById('menu').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); document.getElementById('resetModal').classList.remove('show'); }
-function confirmReset(){ closeAll(); document.getElementById('resetModal').classList.add('show'); document.getElementById('overlay').classList.add('show'); }
-function doReset(){ checked.clear(); localStorage.removeItem('mv'); init(); closeAll(); }
-
+// Call init immediately and also on window load to be safe
+init(); 
 window.onload = init;

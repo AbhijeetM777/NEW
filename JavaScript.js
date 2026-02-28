@@ -81,3 +81,16 @@ function init() {
 // Call init immediately and also on window load to be safe
 init(); 
 window.onload = init;
+
+
+// At the bottom of JavaScript.js
+function doReset(){ 
+    checked.clear(); 
+    localStorage.removeItem('mv'); 
+    init(); 
+    closeAll(); 
+}
+
+// THIS LINE IS THE MOST IMPORTANT:
+init();
+

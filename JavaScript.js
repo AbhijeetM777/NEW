@@ -52,7 +52,7 @@ function init() {
                 ${items.map(item => {
                     const id = key + '|' + item;
                     const isChecked = checked.has(id);
-                    
+                    return \`
                     <div class="item \${isChecked ? 'checked' : ''}" data-id="\${id}" onclick="handleItemClick(event, this)">
                         <div class="checkbox"></div>
                         <div class="item-text">\${item}</div>
@@ -129,4 +129,3 @@ function toggleMenu(){
 
 /* --- START --- */
 document.addEventListener('DOMContentLoaded', init);
-

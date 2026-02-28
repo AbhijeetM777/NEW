@@ -1,53 +1,651 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manaya's Moving Essentials</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#7C3AED">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Manaya's New House 🏡</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+/* ============ RESET & ROOT ============ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+    --violet:#8B5CF6;
+    --dark:#2E1065;
+    --navy:#1a0f2e;
+    --border:#C4B5FD;
+    --card:rgba(255,255,255,0.93);
+    --item-bg:rgba(245,243,255,0.9);
+}
+html,body{height:100%;}
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--navy);
+    color:var(--dark);
+    min-height:100vh;
+    padding-bottom:90px;
+    overscroll-behavior-y:none;
+}
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<link rel="icon" href="data:,">
+/* ============ BACKGROUND LAYERS ============ */
+#bg-a,#bg-b{
+    position:fixed;inset:0;z-index:0;
+    background-size:cover;background-position:center;
+    transition:opacity 1.2s ease;pointer-events:none;
+}
+#bg-b{opacity:0;}
+#bg-a::after,#bg-b::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(160deg,rgba(20,8,45,.65) 0%,rgba(20,8,45,.3) 50%,rgba(46,16,101,.75) 100%);
+}
 
+/* ============ HEADER ============ */
+.app-header{
+    background:rgba(46,16,101,.88);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    padding:18px 20px 14px;
+    position:sticky;top:0;z-index:100;
+    border-bottom:1px solid rgba(139,92,246,.2);
+}
+.header-top{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+h1{
+    font-size:1.25em;font-weight:900;
+    color:#fff;letter-spacing:-0.5px;
+    display:flex;align-items:center;gap:10px;
+}
+.logo-badge{
+    background:var(--violet);color:#fff;
+    width:32px;height:32px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1em;flex-shrink:0;
+}
+.subtitle{
+    font-size:0.72em;color:rgba(167,139,250,.65);
+    font-weight:500;padding-left:42px;margin-bottom:10px;
+    letter-spacing:.3px;
+}
+.header-stats{
+    display:flex;justify-content:space-between;
+    font-size:0.8em;color:rgba(167,139,250,.8);
+    font-weight:500;margin-bottom:6px;
+}
+.header-stats #statsPercent{color:var(--violet);font-weight:700;}
+.progress-container{
+    background:rgba(139,92,246,.2);
+    height:5px;border-radius:3px;overflow:hidden;
+}
+.progress-bar{
+    height:100%;background:var(--violet);width:0%;
+    border-radius:3px;transition:width .4s cubic-bezier(.4,0,.2,1);
+}
+
+/* ============ HINT BAR ============ */
+.hint-bar{
+    background:rgba(46,16,101,.75);
+    backdrop-filter:blur(8px);
+    color:rgba(167,139,250,.75);
+    text-align:center;font-size:.75em;font-weight:500;
+    padding:7px 16px;letter-spacing:.3px;
+    position:relative;z-index:10;
+}
+.hint-bar b{color:var(--violet);}
+
+/* ============ CONTENT ============ */
+.content{
+    padding:14px;max-width:620px;margin:0 auto;
+    position:relative;z-index:10;
+}
+
+/* ============ CATEGORY CARD ============ */
+.category{
+    background:var(--card);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-radius:16px;
+    border:1.5px solid rgba(196,181,253,.5);
+    margin-bottom:10px;
+    overflow:visible;
+    box-shadow:0 4px 20px rgba(46,16,101,.13);
+}
+.category-header{
+    padding:14px 16px;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1.5px solid rgba(196,181,253,.4);
+    border-radius:16px 16px 0 0;
+    user-select:none;transition:background .15s;
+}
+.category-header:hover{background:rgba(237,233,254,.5);}
+.category.collapsed .category-header{border-bottom:none;border-radius:16px;}
+.category-title{
+    font-size:.93em;font-weight:700;color:var(--dark);
+    display:flex;align-items:center;gap:10px;
+}
+.cat-icon{
+    width:34px;height:34px;border-radius:10px;
+    background:rgba(237,233,254,.9);
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.15em;flex-shrink:0;
+}
+.right-side{display:flex;align-items:center;gap:8px;}
+.category-count{
+    background:#ede9fe;color:#6D28D9;
+    padding:3px 10px;border-radius:20px;
+    font-size:.73em;font-weight:700;
+    border:1.5px solid var(--border);
+    white-space:nowrap;
+}
+.category-count.done{background:var(--dark);color:var(--violet);border-color:var(--dark);}
+.toggle-icon{
+    color:#a78bfa;font-size:.6em;
+    transition:transform .25s;
+}
+.category.collapsed .toggle-icon{transform:rotate(-90deg);}
+
+/* ============ ITEMS LIST ============ */
+.items-list{
+    padding:10px;display:grid;gap:6px;
+    border-radius:0 0 16px 16px;
+}
+.category.collapsed .items-list{display:none;}
+
+/* ============ ITEM ROW ============ */
+.item{
+    background:var(--item-bg);
+    padding:11px 12px;border-radius:10px;
+    display:flex;align-items:center;gap:10px;
+    border:1.5px solid transparent;
+    transition:background .15s,border-color .15s;
+    cursor:pointer;user-select:none;
+}
+.item:hover{border-color:#a78bfa;background:rgba(237,233,254,.95);}
+.item.checked{background:rgba(233,228,255,.85);border-color:var(--violet);}
+.checkbox{
+    width:20px;height:20px;border:2px solid #c4b5fd;
+    border-radius:5px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.9);position:relative;
+    transition:all .2s;
+}
+.item.checked .checkbox{background:var(--dark);border-color:var(--dark);}
+.item.checked .checkbox::after{
+    content:"✓";color:var(--violet);
+    font-weight:900;font-size:12px;
+    position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%);
+}
+.item-text{
+    font-size:.87em;flex:1;font-weight:500;
+    color:#4c1d95;line-height:1.4;transition:all .2s;
+}
+.item.checked .item-text{text-decoration:line-through;color:#a78bfa;}
+
+/* ============ SHOP LOGOS ============ */
+.shop-logos{
+    display:flex;align-items:center;gap:5px;
+    flex-shrink:0;margin-left:auto;padding-left:6px;
+}
+.shop-logo{
+    width:26px;height:26px;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:all .15s;
+    border:1.5px solid transparent;
+    overflow:hidden;flex-shrink:0;
+}
+.shop-logo:hover{transform:scale(1.15);box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.shop-logo:active{transform:scale(.92);}
+.logo-flipkart{background:#fff;border-color:#2874F0;}
+.logo-flipkart:hover{background:#2874F0;}
+.logo-amazon{background:#fff;border-color:#FF9900;}
+.logo-amazon:hover{background:#FF9900;}
+.logo-meesho{background:#fff;border-color:#F43397;}
+.logo-meesho:hover{background:#F43397;}
+.shop-logo img{
+    width:15px;height:15px;object-fit:contain;
+    transition:filter .15s;pointer-events:none;
+}
+.logo-flipkart:hover img,
+.logo-amazon:hover img,
+.logo-meesho:hover img{filter:brightness(0) invert(1);}
+
+/* ============ GWEN SPECIAL ============ */
+.category.gwen-cat{border-color:rgba(196,181,253,.8);}
+.category.gwen-cat .category-header{
+    background:linear-gradient(135deg,rgba(245,243,255,.95),rgba(255,255,255,.85));
+}
+.category.gwen-cat .cat-icon{background:rgba(237,233,254,.95);}
+.cat-gwen-badge{
+    font-size:.66em;font-weight:700;
+    background:linear-gradient(135deg,#a78bfa,#7c3aed);
+    color:#fff;padding:2px 7px;border-radius:10px;
+    margin-left:4px;vertical-align:middle;
+}
+
+/* ============ FAB ============ */
+.fab{
+    position:fixed;bottom:22px;right:20px;
+    width:52px;height:52px;
+    background:var(--dark);color:var(--violet);
+    border:none;border-radius:50%;font-size:22px;
+    cursor:pointer;z-index:99;
+    box-shadow:0 4px 18px rgba(46,16,101,.5);
+    display:flex;align-items:center;justify-content:center;
+    transition:all .2s;
+}
+.fab:hover{background:#1e0a50;}
+.fab:active{transform:scale(.93);}
+
+/* ============ MENU ============ */
+.menu{
+    position:fixed;bottom:84px;right:20px;
+    background:rgba(255,255,255,.97);
+    backdrop-filter:blur(12px);
+    border-radius:14px;padding:8px;
+    display:none;flex-direction:column;gap:4px;
+    z-index:99;min-width:185px;
+    border:1.5px solid var(--border);
+    box-shadow:0 10px 36px rgba(46,16,101,.2);
+}
+.menu.show{display:flex;}
+.menu-btn{
+    padding:10px 14px;border:none;background:none;
+    text-align:left;border-radius:10px;cursor:pointer;
+    font-size:.9em;font-weight:600;
+    display:flex;align-items:center;gap:10px;
+    color:var(--dark);font-family:'Inter',sans-serif;
+    transition:background .15s;
+}
+.menu-btn:hover{background:#ede9fe;}
+
+/* ============ OVERLAY ============ */
+.overlay{
+    position:fixed;inset:0;
+    background:rgba(20,8,45,.55);
+    z-index:98;display:none;
+    backdrop-filter:blur(3px);
+}
+.overlay.show{display:block;}
+
+/* ============ MODALS ============ */
+.modal{
+    position:fixed;top:50%;left:50%;
+    transform:translate(-50%,-50%) scale(.93);
+    background:rgba(255,255,255,.97);
+    backdrop-filter:blur(16px);
+    border-radius:20px;padding:24px;
+    width:90%;max-width:400px;
+    z-index:100;display:none;opacity:0;
+    transition:all .2s;
+    box-shadow:0 20px 56px rgba(46,16,101,.25);
+    border:1.5px solid var(--border);
+}
+.modal.show{display:block;opacity:1;transform:translate(-50%,-50%) scale(1);}
+.modal h3{margin-bottom:14px;font-size:1.05em;font-weight:800;color:var(--dark);}
+.modal textarea{
+    width:100%;height:190px;
+    border:1.5px solid var(--border);border-radius:10px;
+    padding:11px;font-family:monospace;font-size:.8em;
+    resize:none;margin-bottom:10px;outline:none;color:var(--dark);
+}
+.modal textarea:focus{border-color:var(--violet);}
+.close-btn{
+    position:absolute;top:13px;right:13px;
+    width:28px;height:28px;border:none;
+    background:#ede9fe;border-radius:50%;
+    cursor:pointer;font-size:1em;color:#6d28d9;
+    display:flex;align-items:center;justify-content:center;
+}
+
+/* ============ BUTTONS ============ */
+.btn{
+    width:100%;padding:12px;border:none;border-radius:10px;
+    background:var(--dark);color:var(--violet);
+    font-weight:700;font-size:.93em;cursor:pointer;
+    margin-top:8px;font-family:'Inter',sans-serif;transition:all .15s;
+}
+.btn:hover{background:#1e0a50;}
+.btn.secondary{background:#ede9fe;color:var(--dark);border:1.5px solid var(--border);}
+.btn.secondary:hover{background:#ddd6fe;}
+.btn.danger{background:#dc2626;color:#fff;}
+.btn.danger:hover{background:#b91c1c;}
+.btn-group{display:flex;gap:10px;}
+.btn-group .btn{flex:1;margin:0;}
+
+/* ============ TOAST ============ */
+.toast{
+    position:fixed;bottom:90px;left:50%;
+    transform:translateX(-50%) translateY(80px);
+    background:var(--dark);color:var(--violet);
+    padding:10px 22px;border-radius:22px;
+    font-size:.86em;font-weight:600;
+    opacity:0;transition:all .3s;z-index:101;
+    box-shadow:0 4px 14px rgba(46,16,101,.3);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ============ BG LABEL ============ */
+#bg-label{
+    position:fixed;top:78px;right:14px;
+    background:rgba(46,16,101,.72);color:var(--violet);
+    padding:4px 12px;border-radius:18px;
+    font-size:.68em;font-weight:700;letter-spacing:.8px;
+    z-index:50;pointer-events:none;opacity:0;
+    transition:opacity .5s;backdrop-filter:blur(10px);
+    border:1px solid rgba(139,92,246,.25);
+    text-transform:uppercase;
+}
+#bg-label.show{opacity:1;}
+    </style>
 </head>
 <body>
 
-<div id="bg-a"></div>
-<div id="bg-b"></div>
+    <div id="bg-a"></div>
+    <div id="bg-b"></div>
+    <div id="bg-label"></div>
 
-<div class="app-header">
-    <h1><span class="logo-badge">🏡</span> Manaya's New House</h1>
-
-    <div class="header-stats">
-        <span id="statsText">0/0 items packed</span>
-        <span id="statsPercent">0%</span>
+    <div class="app-header">
+        <div class="header-top">
+            <h1><div class="logo-badge">🏡</div>Manaya's New House</h1>
+        </div>
+        <div class="subtitle">Pre-Requisite Checklist ✨</div>
+        <div class="header-stats">
+            <span id="statsText">0/0 items packed</span>
+            <span id="statsPercent">0%</span>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
     </div>
 
-    <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
+    <div class="hint-bar">
+        Tap the logos on each item to shop on <b>Flipkart</b>, <b>Amazon</b> or <b>Meesho</b> 🛒
     </div>
-</div>
 
-<div class="hint-bar">
-    Tap logos to shop on <b>Flipkart</b>, <b>Amazon</b> or <b>Meesho</b>
-</div>
+    <div class="content" id="content"></div>
 
-<div id="content" class="content"></div>
+    <button class="fab" onclick="toggleMenu()">≡</button>
+    <div class="overlay" id="overlay" onclick="closeAll()"></div>
 
-<button class="fab">≡</button>
-<div id="overlay" class="overlay"></div>
+    <div class="menu" id="menu">
+        <button class="menu-btn" onclick="expandAll()">📂 Expand All</button>
+        <button class="menu-btn" onclick="collapseAll()">📁 Collapse All</button>
+        <button class="menu-btn" onclick="showExport()">📋 Export Markdown</button>
+        <button class="menu-btn" onclick="confirmReset()">🗑️ Reset Progress</button>
+    </div>
 
-<div id="menu" class="menu">
-    <button class="menu-btn">🗑️ Reset Progress</button>
-</div>
+    <div class="modal" id="exportModal">
+        <h3>📋 Export Checklist</h3>
+        <button class="close-btn" onclick="closeAll()">×</button>
+        <textarea id="exportArea" readonly></textarea>
+        <button class="btn" onclick="copyExport()">Copy to Clipboard</button>
+        <button class="btn secondary" onclick="closeAll()">Close</button>
+    </div>
 
-<div id="resetModal" class="reset-modal">
-    <h3>Reset Progress?</h3>
-    <p>This will clear all checkboxes.</p>
-    <button id="resetBtn">Reset</button>
-    <button id="cancelReset">Cancel</button>
-</div>
+    <div class="modal" id="resetModal">
+        <h3>🗑️ Reset Progress?</h3>
+        <p style="color:#6d28d9;font-size:.9em;margin-bottom:20px;line-height:1.5;">This will clear all checked items. Cannot be undone.</p>
+        <div class="btn-group">
+            <button class="btn secondary" onclick="closeAll()">Cancel</button>
+            <button class="btn danger" onclick="doReset()">Reset</button>
+        </div>
+    </div>
 
-<script src="JavaScript.js"></script>
+    <div class="toast" id="toast"></div>
+
+    <script>
+/* ============ DATA ============ */
+const categories = [
+    { icon:'🍳', name:'Kitchen', items:["Plates & bowls","Mugs & glasses","Cutlery set","Chef's knife","Cutting board","Frying pan","Saucepan","Baking sheet","Mixing bowls","Spatula & spoons","Tongs & whisk","Can opener","Coffee maker","Toaster","Blender","Microwave","Kettle","Dish soap & sponges","Trash can","Food containers","Aluminum foil","Paper towels"] },
+    { icon:'🛏️', name:'Bedroom', items:["Mattress & bed frame","Pillows & sheets","Duvet/blanket","Bedside table","Lamp","Hangers","Laundry basket","Full length mirror","Curtains","Alarm clock"] },
+    { icon:'🚿', name:'Bathroom', items:["Shower curtain","Bath mat","Towels & washcloths","Toilet brush","Plunger","Toilet paper","Soap dispenser","Shampoo","First aid kit","Trash can"] },
+    { icon:'🛋️', name:'Living Room', items:["Sofa/couch","Coffee table","TV & stand","Rugs","Curtains","Lamps","Throw pillows","Coasters","WiFi router"] },
+    { icon:'🧹', name:'Cleaning', items:["Vacuum cleaner","Broom & dustpan","Mop & bucket","All-purpose cleaner","Glass cleaner","Laundry detergent","Trash bags","Microfiber cloths"] },
+    { icon:'🔧', name:'Tools', items:["Hammer","Screwdriver set","Tape measure","Level","Drill","Wrench","Flashlight","Batteries","Extension cords","Light bulbs","Duct tape"] },
+    { icon:'🚨', name:'Safety', items:["Smoke detectors","Fire extinguisher","First aid kit","Flashlight","Door locks"] },
+    { icon:'🐱', name:"Gwen's Corner", items:["Royal Canin Ragdoll kitten dry food","Wet cat food pouches (pâté)","Cat treats (Temptations / Dreamies)","Freeze-dried chicken cat treats","Dental treats for cats","Cat water fountain (ceramic)","Stainless steel food bowls (x2)","Premium clumping cat litter (bentonite)","Hooded litter box with carbon filter","Litter scoop & mat","Litter disposal bags","Cat carrier (airline approved)","Orthopedic cat bed (plush)","Heated cat blanket","Large multi-level cat tree (tall, sturdy)","Cat tree with condo & hammock perch","Wall-mounted cat hammock","Hanging canvas cat hammock","Window cat hammock (suction cup)","Feather wand teaser toy","Interactive laser pointer","Crinkle & catnip tunnel","Catnip spray & dried catnip","Soft plush mice toys","Puzzle feeder / slow feeder bowl","Cat grass & catnip pot","Grooming slicker brush (for long fur)","Wide-tooth dematting comb","Nail clippers for cats","Cat-safe wipes","Flea & tick monthly spot-on treatment","Cat toothbrush & enzymatic toothpaste","Pet first aid kit","Breakaway safety collar with ID tag","GPS pet tracker tag","Cat window perch / suction shelf","Calming diffuser (Feliway)","Pheromone calming collar"] },
+    { icon:'✨', name:'House Aesthetics', items:["Ceramic vase (neutral tones)","Dried pampas grass","Scented candles (vanilla/sandalwood)","Candle holder set","Abstract wall art print","Boho wall tapestry","LED fairy string lights","Macramé wall hanging","Woven rattan basket","Indoor plant (pothos/snake plant)","Terracotta plant pots","Linen throw blanket","Embroidered cushion covers","Table lamp with warm bulb","Bamboo tray organiser","Coffee table books (art/fashion)","Acrylic photo frames","Aesthetic desk organiser","Gold/brass accent bowl or tray","Wax melt warmer","Reed diffuser set","Velvet storage pouches","Minimalist wall clock","LED vanity mirror","Sage room spray"] }
+];
+
+const catPhotos = {
+    'Kitchen':          'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1400&q=80&fit=crop',
+    'Bedroom':          'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1400&q=80&fit=crop',
+    'Bathroom':         'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1400&q=80&fit=crop',
+    'Living Room':      'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1400&q=80&fit=crop',
+    'Cleaning':         'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1400&q=80&fit=crop',
+    'Tools':            'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=1400&q=80&fit=crop',
+    'Safety':           'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=80&fit=crop',
+    "Gwen's Corner":    'https://images.unsplash.com/photo-1591871937573-74dbba515c4c?w=1400&q=80&fit=crop',
+    'House Aesthetics': 'https://images.unsplash.com/photo-1615873968403-89e068629265?w=1400&q=80&fit=crop'
+};
+
+/* ============ STORAGE ============ */
+function storageGet(k){
+    try{ const v=localStorage.getItem(k); if(v!==null) return v; }catch(e){}
+    try{ return sessionStorage.getItem(k); }catch(e){}
+    return null;
+}
+function storageSet(k,v){
+    try{ localStorage.setItem(k,v); return; }catch(e){}
+    try{ sessionStorage.setItem(k,v); }catch(e){}
+}
+
+let checked = new Set(JSON.parse(storageGet('mv')||'[]'));
+const itemURLs = new Map();
+
+/* ============ BACKGROUND ============ */
+const bgA = document.getElementById('bg-a');
+const bgB = document.getElementById('bg-b');
+const bgLabel = document.getElementById('bg-label');
+let bgActive = 'a', currentCat = null, labelTimer = null;
+
+function preloadImages(){
+    Object.values(catPhotos).forEach(url=>{ const i=new Image(); i.src=url; });
+}
+
+function setBackground(name){
+    if(name === currentCat) return;
+    currentCat = name;
+    const url = catPhotos[name];
+    if(!url) return;
+    const inc = bgActive==='a' ? bgB : bgA;
+    const out = bgActive==='a' ? bgA : bgB;
+    inc.style.backgroundImage = `url("${url}")`;
+    inc.style.opacity = '1';
+    out.style.opacity = '0';
+    bgActive = bgActive==='a' ? 'b' : 'a';
+    bgLabel.textContent = name.toUpperCase();
+    bgLabel.classList.add('show');
+    if(labelTimer) clearTimeout(labelTimer);
+    labelTimer = setTimeout(()=>bgLabel.classList.remove('show'), 2200);
+}
+
+function setupObserver(){
+    const obs = new IntersectionObserver(entries=>{
+        let best=null, bestR=0;
+        entries.forEach(e=>{ if(e.isIntersecting && e.intersectionRatio>bestR){ bestR=e.intersectionRatio; best=e.target; }});
+        if(best) setBackground(best.dataset.catName);
+    }, {threshold:[0.2,0.4,0.6,0.8]});
+    document.querySelectorAll('.category[data-cat-name]').forEach(el=>obs.observe(el));
+}
+
+/* ============ SHOP URLS ============ */
+function buildURLs(){
+    for(const cat of categories){
+        for(const item of cat.items){
+            const q = encodeURIComponent(item);
+            itemURLs.set(item,{
+                fk:     'https://www.flipkart.com/search?q='+q,
+                amz:    'https://www.amazon.in/s?k='+q,
+                meesho: 'https://www.meesho.com/search?q='+q
+            });
+        }
+    }
+}
+
+function openShop(itemName, site, e){
+    e.stopPropagation(); e.preventDefault();
+    const urls = itemURLs.get(itemName);
+    if(!urls) return;
+    window.open(urls[site], '_blank', 'noopener,noreferrer');
+}
+
+/* ============ RENDER ============ */
+function init(){
+    buildURLs();
+    preloadImages();
+    const c = document.getElementById('content');
+    c.innerHTML = '';
+
+    for(const cat of categories){
+        const key = cat.name;
+        const done = cat.items.filter(i=>checked.has(key+'|'+i)).length;
+        const isDone = done === cat.items.length;
+        const isGwen = key === "Gwen's Corner";
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'category' + (isGwen ? ' gwen-cat' : '');
+        wrapper.dataset.catName = key;
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'category-header';
+        const badge = isGwen ? ' <span class="cat-gwen-badge">Doll 🐾</span>' : '';
+        header.innerHTML = `
+            <div class="category-title">
+                <div class="cat-icon">${cat.icon}</div>
+                <span>${cat.name}${badge}</span>
+            </div>
+            <div class="right-side">
+                <span class="category-count${isDone?' done':''}" id="cnt-${key}">${done}/${cat.items.length}</span>
+                <span class="toggle-icon">▼</span>
+            </div>`;
+        header.addEventListener('click', ()=> wrapper.classList.toggle('collapsed'));
+
+        // Items
+        const list = document.createElement('div');
+        list.className = 'items-list';
+
+        for(const item of cat.items){
+            const id = key+'|'+item;
+            const isChecked = checked.has(id);
+
+            const itemEl = document.createElement('div');
+            itemEl.className = 'item' + (isChecked ? ' checked' : '');
+            itemEl.dataset.id = id;
+            itemEl.addEventListener('click', e=>{
+                if(!e.target.closest('.shop-logo')) toggleItem(itemEl);
+            });
+
+            const cb  = document.createElement('div'); cb.className = 'checkbox';
+            const txt = document.createElement('div'); txt.className = 'item-text'; txt.textContent = item;
+
+            // Shop logos
+            const logos = document.createElement('div');
+            logos.className = 'shop-logos';
+            [
+                {site:'fk',    cls:'logo-flipkart', icon:'https://img.icons8.com/color/48/flipkart.png',  alt:'Flipkart'},
+                {site:'amz',   cls:'logo-amazon',   icon:'https://img.icons8.com/color/48/amazon.png',    alt:'Amazon'},
+                {site:'meesho',cls:'logo-meesho',   icon:'https://img.icons8.com/color/48/meesho.png',    alt:'Meesho'}
+            ].forEach(({site,cls,icon,alt})=>{
+                const logo = document.createElement('div');
+                logo.className = 'shop-logo '+cls;
+                logo.title = 'Shop on '+alt;
+                const img = document.createElement('img');
+                img.src=icon; img.alt=alt; img.width=15; img.height=15;
+                logo.appendChild(img);
+                logo.addEventListener('click', e=>openShop(item,site,e));
+                logos.appendChild(logo);
+            });
+
+            itemEl.appendChild(cb);
+            itemEl.appendChild(txt);
+            itemEl.appendChild(logos);
+            list.appendChild(itemEl);
+        }
+
+        wrapper.appendChild(header);
+        wrapper.appendChild(list);
+        c.appendChild(wrapper);
+    }
+
+    updateStats();
+    setBackground(categories[0].name);
+    requestAnimationFrame(()=>requestAnimationFrame(setupObserver));
+}
+
+/* ============ ITEM TOGGLE ============ */
+function toggleItem(el){
+    const id = el.dataset.id; if(!id) return;
+    if(checked.has(id)){ checked.delete(id); el.classList.remove('checked'); }
+    else { checked.add(id); el.classList.add('checked'); if(navigator.vibrate) navigator.vibrate(35); }
+    const catName = id.split('|')[0];
+    const cat = categories.find(c=>c.name===catName);
+    if(cat){
+        const d = cat.items.filter(i=>checked.has(catName+'|'+i)).length;
+        const cnt = document.getElementById('cnt-'+catName);
+        if(cnt){ cnt.textContent=d+'/'+cat.items.length; cnt.classList.toggle('done', d===cat.items.length); }
+    }
+    save(); updateStats();
+}
+
+/* ============ STATS ============ */
+function updateStats(){
+    let total=0, done=0;
+    for(const cat of categories){ total+=cat.items.length; done+=cat.items.filter(i=>checked.has(cat.name+'|'+i)).length; }
+    const pct = total ? Math.round((done/total)*100) : 0;
+    document.getElementById('statsText').textContent = done+'/'+total+' items packed';
+    document.getElementById('statsPercent').textContent = pct+'%';
+    document.getElementById('progressBar').style.width = pct+'%';
+}
+
+/* ============ SAVE ============ */
+function save(){ storageSet('mv', JSON.stringify([...checked])); }
+
+/* ============ MENU & MODALS ============ */
+function toggleMenu(){
+    document.getElementById('menu').classList.toggle('show');
+    document.getElementById('overlay').classList.toggle('show');
+}
+function closeAll(){
+    ['menu','overlay','exportModal','resetModal'].forEach(id=>document.getElementById(id)?.classList.remove('show'));
+}
+function expandAll(){ document.querySelectorAll('.category').forEach(c=>c.classList.remove('collapsed')); closeAll(); }
+function collapseAll(){ document.querySelectorAll('.category').forEach(c=>c.classList.add('collapsed')); closeAll(); }
+
+function showExport(){
+    let md = `# Manaya's New House Checklist\n${new Date().toLocaleDateString()}\n\n`;
+    for(const cat of categories){
+        md += `## ${cat.icon} ${cat.name}\n`;
+        cat.items.forEach(i=>md+=`- [${checked.has(cat.name+'|'+i)?'x':' '}] ${i}\n`);
+        md += '\n';
+    }
+    document.getElementById('exportArea').value = md;
+    document.getElementById('exportModal').classList.add('show');
+    document.getElementById('overlay').classList.add('show');
+}
+function copyExport(){
+    navigator.clipboard.writeText(document.getElementById('exportArea').value)
+        .then(()=>showToast('Copied to clipboard!'));
+}
+function confirmReset(){
+    closeAll();
+    document.getElementById('resetModal').classList.add('show');
+    document.getElementById('overlay').classList.add('show');
+}
+function doReset(){ checked.clear(); save(); init(); closeAll(); showToast('Progress reset!'); }
+
+function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+/* ============ START ============ */
+document.addEventListener('DOMContentLoaded', init);
+    </script>
+
 </body>
 </html>

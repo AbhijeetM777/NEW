@@ -30,9 +30,12 @@ document.addEventListener('DOMContentLoaded', init);
      updateStats();
      setBackground('Kitchen');
      attachGlobalEvents() {
+        document.querySelector('.fab').addEventListener('click', toggleMenu);
         document.getElementById('overlay').addEventListener('click', closeAll);
         document.querySelector('.menu-btn').addEventListener('click', confirmReset);
         document.getElementById('resetBtn').addEventListener('click', doReset);
+        document.getElementById('cancelReset').addEventListener('click', closeAll);
+         
     };
     attachGlobalEvents();
  }
@@ -217,5 +220,6 @@ function doReset() {
     renderCategories();
     updateStats();
 }
+
 
 

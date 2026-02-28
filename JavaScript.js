@@ -59,7 +59,7 @@ function renderCategories(){
 
     categories.forEach(cat=>{
         const wrapper = document.createElement('div');
-        wrapper.className = index === 0 ? 'category' : 'category collapsed';
+        wrapper.className='category';
 
         wrapper.innerHTML = `
             <div class="category-header">
@@ -75,10 +75,7 @@ function renderCategories(){
         const header = wrapper.querySelector('.category-header');
         const itemList = wrapper.querySelector('.items-list');
 
-        header.addEventListener('click',()=>{
-            wrapper.classList.toggle('collapsed');
-            setBackground(cat.name);
-        });
+        
 
         cat.items.forEach(item=>{
             const id = `${cat.name}|${item}`;
@@ -178,4 +175,5 @@ function doReset(){
     renderCategories();
     updateStats();
 }
+
 

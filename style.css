@@ -70,7 +70,7 @@ body{
     cursor:pointer;
 }
 .items-list{padding:10px;display:grid;gap:6px}
-.category.collapsed .items-list{display:none}
+
 
 /* Items */
 .item{
@@ -153,3 +153,4 @@ body{
     z-index:20;
 }
 .reset-modal.show{display:block}
+
